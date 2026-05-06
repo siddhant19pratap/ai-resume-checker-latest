@@ -8,88 +8,101 @@ const ResumeCard = ({
 }) => {
   const score = feedback.overallScore;
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-400";
-    if (score >= 60) return "text-amber-400";
-    return "text-red-400";
-  };
+  const badgeCfg = (s: number) =>
+    s >= 80
+      ? { label: "Excellent", cls: "bg-green-500/10 border-green-500/20 text-green-400" }
+      : s >= 60
+      ? { label: "Good", cls: "bg-amber-500/10 border-amber-500/20 text-amber-400" }
+      : { label: "Needs Work", cls: "bg-red-500/10 border-red-500/20 text-red-400" };
 
-  const getScoreLabel = (score: number) => {
-    if (score >= 80) return "Excellent";
-    if (score >= 60) return "Good";
-    return "Needs Improvement";
-  };
-
-  const getScoreBadge = (score: number) => {
-    if (score >= 80) return "bg-green-500/10 border-green-500/20 text-green-400";
-    if (score >= 60) return "bg-amber-500/10 border-amber-500/20 text-amber-400";
-    return "bg-red-500/10 border-red-500/20 text-red-400";
-  };
+  const { label, cls } = badgeCfg(score);
 
   return (
     <Link
       to={`/resume/${id}`}
-      className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/70 p-5 flex flex-col gap-4 hover:border-zinc-700 hover:shadow-xl transition-all duration-200"
+      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-200"
+      style={{
+        background: "#0a0f1e",
+        border: "1px solid rgba(255,255,255,0.065)",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.11)";
+        (e.currentTarget as HTMLElement).style.background = "#0d1525";
+        (e.currentTarget as HTMLElement).style.boxShadow =
+          "0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04)";
+        (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.065)";
+        (e.currentTarget as HTMLElement).style.background = "#0a0f1e";
+        (e.currentTarget as HTMLElement).style.boxShadow = "none";
+        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+      }}
     >
       {/* Header */}
-      <div className="flex justify-between items-start gap-3">
-        <div className="min-w-0 flex-1">
-          {companyName || jobTitle ? (
-            <>
-              {companyName && (
-                <h2 className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition-colors duration-200">
-                  {companyName}
-                </h2>
-              )}
-              {jobTitle && (
-                <p className="text-xs text-zinc-500 truncate mt-0.5">{jobTitle}</p>
-              )}
-            </>
-          ) : (
-            <h2 className="text-sm font-semibold text-white">Resume</h2>
-          )}
-          <span className={`inline-block text-xs font-medium mt-2 px-2.5 py-1 rounded-full border ${getScoreBadge(score)}`}>
-            {getScoreLabel(score)}
-          </span>
-        </div>
-
-        <div className="shrink-0">
-          <ScoreCircle score={score} />
+      <div className="p-5 pb-4">
+        <div className="flex justify-between items-start gap-3">
+          <div className="min-w-0 flex-1">
+            {companyName && (
+              <h2 className="text-sm font-semibold text-white truncate leading-snug group-hover:text-blue-400 transition-colors duration-200">
+                {companyName}
+              </h2>
+            )}
+            {jobTitle && (
+              <p className="text-xs text-white/35 truncate mt-0.5">{jobTitle}</p>
+            )}
+            {!companyName && !jobTitle && (
+              <h2 className="text-sm font-semibold text-white">Resume</h2>
+            )}
+            <span className={`inline-block text-[10px] font-semibold mt-2.5 px-2 py-0.5 rounded-full border ${cls}`}>
+              {label}
+            </span>
+          </div>
+          <div className="shrink-0 mt-0.5">
+            <ScoreCircle score={score} size={72} />
+          </div>
         </div>
       </div>
 
       {/* Preview */}
-      <div className="rounded-xl border border-zinc-800 bg-zinc-800/30 overflow-hidden">
+      <div
+        className="mx-4 mb-4 rounded-xl overflow-hidden"
+        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+      >
         {imagePath ? (
           <img
             src={imagePath}
-            alt="Resume Preview"
-            className="w-full h-[220px] object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300"
+            alt="Resume preview"
+            className="w-full h-[200px] object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
             loading="lazy"
           />
         ) : (
-          <div className="p-4 space-y-2">
-            <div className="h-2.5 bg-zinc-700 rounded w-3/4" />
-            <div className="h-2.5 bg-zinc-700 rounded w-1/2" />
-            <div className="h-2.5 bg-zinc-700 rounded w-2/3" />
-            <div className="flex gap-2 mt-3">
-              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
-              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
-              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
+          <div className="p-4 space-y-2.5">
+            <div className="h-2 rounded-full bg-white/6 w-3/4" />
+            <div className="h-2 rounded-full bg-white/5 w-1/2" />
+            <div className="h-2 rounded-full bg-white/4 w-2/3" />
+            <div className="h-2 rounded-full bg-white/5 w-4/5 mt-1" />
+            <div className="flex gap-1.5 mt-3">
+              <div className="h-4 w-10 rounded-full bg-blue-500/20" />
+              <div className="h-4 w-10 rounded-full bg-purple-500/15" />
+              <div className="h-4 w-10 rounded-full bg-blue-500/15" />
             </div>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 text-zinc-500">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <div
+        className="px-5 py-3.5 flex items-center justify-between"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <div className="flex items-center gap-1.5 text-xs text-white/30">
+          <svg className="w-3 h-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
           Analyzed
         </div>
-        <span className="text-zinc-600 group-hover:text-blue-400 transition-colors duration-200">
+        <span className="text-xs text-white/25 group-hover:text-blue-400 transition-colors duration-200">
           View Details →
         </span>
       </div>

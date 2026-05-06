@@ -18,7 +18,6 @@ export default function Quiz() {
   const navigate = useNavigate();
 
   const { questions = [], domain } = state || {};
-
   const [selectedQuestions] = useState(() => getRandomQuestions(questions, 5));
   const [answers, setAnswers] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,22 +29,18 @@ export default function Quiz() {
   };
 
   const handleSubmit = async () => {
-    if (answers.length !== selectedQuestions.length) {
+    if (answers.filter(Boolean).length !== selectedQuestions.length) {
       message.error("Please answer all questions");
       return;
     }
-
     try {
       setLoading(true);
-
       const res = await fetch("http://localhost:3001/api/submit-answers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ domain, answers, questions: selectedQuestions }),
       });
-
       const data = await res.json();
-
       navigate("/result", {
         state: {
           resumeScore: state.score,
@@ -65,37 +60,53 @@ export default function Quiz() {
   };
 
   const answeredCount = answers.filter(Boolean).length;
-  const progress = Math.round((answeredCount / selectedQuestions.length) * 100);
+  const progress = Math.round((answeredCount / Math.max(selectedQuestions.length, 1)) * 100);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
+    <main className="min-h-screen bg-[#050816] text-white">
       {/* Navbar */}
-      <div className="sticky top-0 z-50 backdrop-blur-md bg-black/60 border-b border-zinc-800">
+      <div
+        className="sticky top-0 z-50 backdrop-blur-xl border-b"
+        style={{ background: "rgba(5,8,22,0.85)", borderColor: "rgba(255,255,255,0.06)" }}
+      >
         <div className="max-w-6xl mx-auto px-6 py-4">
           <Navbar />
         </div>
       </div>
 
-      {/* Header */}
-      <section className="py-12">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="mb-6">
-            <p className="text-xs font-medium text-blue-400 uppercase tracking-widest mb-2">Skills Quiz</p>
-            <h1 className="text-3xl font-semibold text-white capitalize">
-              {domain} Quiz
-            </h1>
-          </div>
+      {/* Header + Progress */}
+      <section className="pt-12 pb-8 relative">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-violet-600/7 rounded-full blur-[100px]" />
+        </div>
+        <div className="max-w-3xl mx-auto px-6 relative animate-fade-in-up">
+          <p className="eyebrow mb-2">Skills Assessment</p>
+          <h1
+            className="text-3xl font-bold text-white tracking-tight mb-6 capitalize"
+            style={{ letterSpacing: "-0.03em" }}
+          >
+            {domain ? `${domain} Quiz` : "Skills Quiz"}
+          </h1>
 
           {/* Progress */}
           <div>
-            <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
-              <span>{answeredCount} of {selectedQuestions.length} answered</span>
-              <span>{progress}%</span>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-white/40">
+                {answeredCount} / {selectedQuestions.length} answered
+              </span>
+              <span className="text-xs font-bold text-white/50">{progress}%</span>
             </div>
-            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className="w-full h-1.5 rounded-full overflow-hidden"
+              style={{ background: "rgba(255,255,255,0.06)" }}
+            >
               <div
-                className="h-1.5 bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                className="h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${progress}%`,
+                  background: "linear-gradient(90deg, #3b82f6, #8b5cf6)",
+                  boxShadow: progress > 0 ? "0 0 8px rgba(59,130,246,0.5)" : "none",
+                }}
               />
             </div>
           </div>
@@ -105,17 +116,23 @@ export default function Quiz() {
       {/* Questions */}
       <section className="pb-24">
         <div className="max-w-3xl mx-auto px-6 space-y-4">
-
           {selectedQuestions.map((q: any, index: number) => (
             <div
               key={index}
-              className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-6 shadow-lg"
+              className="rounded-2xl p-6 animate-fade-in-up"
+              style={{
+                background: "#0a0f1e",
+                border: "1px solid rgba(255,255,255,0.065)",
+                animationDelay: `${index * 0.05}s`,
+              }}
             >
-              <h2 className="text-sm font-semibold text-white mb-4 leading-relaxed">
-                <span className="text-zinc-500 mr-2">{index + 1}.</span>
+              {/* Question */}
+              <h2 className="text-sm font-semibold text-white leading-relaxed mb-5">
+                <span className="text-white/25 mr-2 font-medium tabular-nums">{index + 1}.</span>
                 {q.question}
               </h2>
 
+              {/* Options */}
               <div className="space-y-2.5">
                 {q.options.map((opt: string, i: number) => {
                   const isSelected = answers[index] === opt;
@@ -123,20 +140,42 @@ export default function Quiz() {
                     <button
                       key={i}
                       onClick={() => handleSelect(index, opt)}
-                      className={`w-full text-left rounded-xl border px-4 py-3 text-sm transition-all duration-200 flex items-center justify-between gap-3 ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-600/10 text-white"
-                          : "border-zinc-700 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200 hover:bg-zinc-800/60"
-                      }`}
+                      className="w-full text-left rounded-xl px-4 py-3 text-sm transition-all duration-150 flex items-center justify-between gap-3"
+                      style={{
+                        background: isSelected
+                          ? "rgba(59,130,246,0.1)"
+                          : "rgba(255,255,255,0.025)",
+                        border: isSelected
+                          ? "1px solid rgba(59,130,246,0.4)"
+                          : "1px solid rgba(255,255,255,0.06)",
+                        color: isSelected ? "#fff" : "rgba(255,255,255,0.55)",
+                        boxShadow: isSelected ? "0 0 0 1px rgba(59,130,246,0.15)" : "none",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) {
+                          (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.12)";
+                          (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.85)";
+                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+                          (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)";
+                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.025)";
+                        }
+                      }}
                     >
-                      <span>{opt}</span>
+                      <span className="flex-1">{opt}</span>
                       <div
-                        className={`shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          isSelected ? "border-blue-500" : "border-zinc-600"
-                        }`}
+                        className="shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-150"
+                        style={{
+                          borderColor: isSelected ? "#3b82f6" : "rgba(255,255,255,0.15)",
+                          background: isSelected ? "rgba(59,130,246,0.2)" : "transparent",
+                        }}
                       >
                         {isSelected && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                         )}
                       </div>
                     </button>
@@ -147,11 +186,29 @@ export default function Quiz() {
           ))}
 
           {/* Submit */}
-          <div className="pt-4">
+          <div className="pt-2">
             <button
               onClick={handleSubmit}
               disabled={loading || answeredCount < selectedQuestions.length}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed text-sm font-medium transition-all duration-200"
+              className="w-full py-4 rounded-2xl text-sm font-semibold text-white transition-all duration-200 disabled:cursor-not-allowed"
+              style={{
+                background:
+                  loading || answeredCount < selectedQuestions.length
+                    ? "rgba(255,255,255,0.04)"
+                    : "linear-gradient(135deg, #3b82f6, #6366f1)",
+                color:
+                  loading || answeredCount < selectedQuestions.length
+                    ? "rgba(255,255,255,0.2)"
+                    : "white",
+                border:
+                  loading || answeredCount < selectedQuestions.length
+                    ? "1px solid rgba(255,255,255,0.06)"
+                    : "none",
+                boxShadow:
+                  loading || answeredCount < selectedQuestions.length
+                    ? "none"
+                    : "0 4px 24px rgba(59,130,246,0.3)",
+              }}
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -159,12 +216,15 @@ export default function Quiz() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                   </svg>
-                  Submitting...
+                  Submitting…
                 </span>
-              ) : "Submit Answers"}
+              ) : answeredCount < selectedQuestions.length ? (
+                `Answer ${selectedQuestions.length - answeredCount} more question${selectedQuestions.length - answeredCount > 1 ? "s" : ""}`
+              ) : (
+                "Submit Answers →"
+              )}
             </button>
           </div>
-
         </div>
       </section>
     </main>
