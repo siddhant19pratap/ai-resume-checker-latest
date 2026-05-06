@@ -17,7 +17,7 @@ export default function Quiz() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const { questions = [], domain } = state || {};
+  const { questions = [], domain, score: resumeScore, matchedSkills, missingSkills } = state || {};
   const [selectedQuestions] = useState(() => getRandomQuestions(questions, 5));
   const [answers, setAnswers] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -43,12 +43,12 @@ export default function Quiz() {
       const data = await res.json();
       navigate("/result", {
         state: {
-          resumeScore: state.score,
+          resumeScore,
           quizScore: data.score,
           percentage: Math.round((data.score / selectedQuestions.length) * 100),
           total: selectedQuestions.length,
-          matchedSkills: state.matchedSkills,
-          missingSkills: state.missingSkills,
+          matchedSkills: matchedSkills ?? [],
+          missingSkills: missingSkills ?? [],
         },
       });
     } catch (err) {
@@ -61,6 +61,41 @@ export default function Quiz() {
 
   const answeredCount = answers.filter(Boolean).length;
   const progress = Math.round((answeredCount / Math.max(selectedQuestions.length, 1)) * 100);
+
+  if (!state) {
+    return (
+      <main className="min-h-screen bg-[#050816] text-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white/30 text-sm mb-4">No quiz data found.</p>
+          <a href="/upload" className="px-5 py-2 rounded-xl text-sm font-medium text-white"
+            style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.25)" }}>
+            Upload Resume
+          </a>
+        </div>
+      </main>
+    );
+  }
+
+  if (selectedQuestions.length === 0) {
+    return (
+      <main className="min-h-screen bg-[#050816] text-white flex items-center justify-center">
+        <div className="text-center max-w-sm">
+          <div className="w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <svg className="w-7 h-7 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-base font-semibold text-white mb-2">No questions available</h3>
+          <p className="text-sm text-white/35 mb-6">We don't have quiz questions for this domain yet.</p>
+          <a href="/upload" className="px-5 py-2.5 rounded-xl text-sm font-medium text-white"
+            style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)", boxShadow: "0 4px 16px rgba(59,130,246,0.3)" }}>
+            Go Back
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#050816] text-white">

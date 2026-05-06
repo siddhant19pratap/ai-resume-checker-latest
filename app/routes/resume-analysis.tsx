@@ -214,7 +214,13 @@ export default function ResumeAnalysis() {
           <button
             onClick={() =>
               navigate("/quiz", {
-                state: { domain: state.resumeDomain, questions: state.resumeQuestions },
+                state: {
+                  domain: state.resumeDomain,
+                  questions: state.resumeQuestions,
+                  score: state.resumeScore,
+                  matchedSkills: state.matchedSkills,
+                  missingSkills: state.missingSkills,
+                },
               })
             }
             className="w-full py-4 rounded-2xl text-sm font-semibold text-white transition-all duration-200 animate-fade-in-up"

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { message, Modal } from "antd";
+import { message } from "antd";
 import Navbar from "~/components/Navbar";
 
 export default function Upload() {
@@ -310,127 +310,188 @@ export default function Upload() {
         </div>
       </section>
 
-      {/* Domain Mismatch Modal */}
-      <Modal
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-        centered
-        className="custom-modal"
-        width={480}
-      >
-        {apiData && apiData.mode === "JD_MODE" && (
-          <div>
-            {/* Modal Header */}
-            <div
-              className="px-6 py-5"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+      {/* Domain Match / Mismatch Modal — custom overlay, no Ant Design */}
+      {isModalOpen && apiData && apiData.mode === "JD_MODE" && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)" }}
+          onClick={handleCancel}
+        >
+          <div
+            className="relative w-full max-w-[460px] rounded-2xl overflow-hidden animate-fade-in-up"
+            style={{
+              background: "#0a0f1e",
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 25px 80px rgba(0,0,0,0.7)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={handleCancel}
+              className="absolute top-4 right-4 w-7 h-7 rounded-lg flex items-center justify-center transition-colors z-10"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.45)" }}
             >
-              <h3 className="text-base font-semibold text-white">Resume vs Job Analysis</h3>
-              <p className="text-xs text-white/35 mt-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Header */}
+            <div className="px-6 pt-6 pb-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="flex items-center gap-3 mb-1">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{
+                    background: isSameDomain ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)",
+                    border: isSameDomain ? "1px solid rgba(34,197,94,0.2)" : "1px solid rgba(59,130,246,0.2)",
+                  }}
+                >
+                  {isSameDomain ? (
+                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                </div>
+                <h3 className="text-base font-semibold text-white">
+                  {isSameDomain ? "Great Match!" : "Domain Analysis"}
+                </h3>
+              </div>
+              <p className="text-xs text-white/35 ml-11">
                 {isSameDomain
-                  ? "Your resume matches this job domain."
-                  : "Your resume targets a different domain than the job."}
+                  ? "Your resume aligns with this job's domain. You're ready to test your skills."
+                  : "Your resume and the job target different domains. Choose which quiz to take."}
               </p>
             </div>
 
             {/* Domain Cards */}
-            <div className={`grid ${isSameDomain ? "grid-cols-1" : "grid-cols-2"} gap-4 p-6`}>
-              {/* Resume domain */}
+            <div className={`grid ${isSameDomain ? "grid-cols-1" : "grid-cols-2"} gap-3 p-5`}>
+              {/* Resume domain card */}
               <div
-                className="rounded-xl p-5 text-center"
-                style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.15)" }}
+                className="rounded-xl p-4"
+                style={{
+                  background: isSameDomain ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.03)",
+                  border: isSameDomain ? "1px solid rgba(34,197,94,0.15)" : "1px solid rgba(255,255,255,0.08)",
+                }}
               >
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400/60 mb-3">
-                  Your Resume
-                </p>
-                <div
-                  className="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center"
-                  style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.2)" }}
-                >
-                  <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                    style={{
+                      background: isSameDomain ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.06)",
+                      border: isSameDomain ? "1px solid rgba(34,197,94,0.25)" : "1px solid rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    <svg className={`w-3 h-3 ${isSameDomain ? "text-green-400" : "text-white/50"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Your Resume</p>
                 </div>
-                <p className="text-sm font-bold text-white mb-1">
+                <p className="text-sm font-bold text-white mb-0.5">
                   {domainLabels[apiData.resumeDomain] ?? apiData.resumeDomain}
                 </p>
-                {isSameDomain && (
-                  <p className="text-xs text-green-400 font-semibold mb-2">Perfect Match</p>
-                )}
-                <p className="text-2xl font-bold text-white mb-4">{apiData.resumeScore}%</p>
+                <p className="text-xs text-white/30 mb-3">
+                  Match score: <span className="text-white/60 font-semibold">{apiData.resumeScore}%</span>
+                </p>
                 <button
                   onClick={() =>
-                    navigate("/quiz", { state: { domain: apiData.resumeDomain, questions: apiData.resumeQuestions } })
+                    navigate("/quiz", {
+                      state: {
+                        domain: apiData.resumeDomain,
+                        questions: apiData.resumeQuestions,
+                        score: apiData.resumeScore,
+                        matchedSkills: apiData.matchedSkills,
+                        missingSkills: apiData.missingSkills,
+                      },
+                    })
                   }
                   className="w-full py-2 rounded-lg text-xs font-semibold text-white transition-all duration-200"
                   style={{
-                    background: "linear-gradient(135deg, #22c55e, #16a34a)",
-                    boxShadow: "0 2px 12px rgba(34,197,94,0.25)",
+                    background: isSameDomain
+                      ? "linear-gradient(135deg, #22c55e, #16a34a)"
+                      : "rgba(255,255,255,0.07)",
+                    border: isSameDomain ? "none" : "1px solid rgba(255,255,255,0.1)",
+                    boxShadow: isSameDomain ? "0 2px 12px rgba(34,197,94,0.25)" : "none",
                   }}
                 >
-                  Take Quiz →
+                  {isSameDomain ? "Take Quiz →" : "Quiz for My Domain"}
                 </button>
               </div>
 
-              {/* JD domain (only if mismatch) */}
+              {/* JD domain card (only if mismatch) */}
               {!isSameDomain && (
                 <div
-                  className="rounded-xl p-5 text-center"
-                  style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}
+                  className="rounded-xl p-4"
+                  style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.18)" }}
                 >
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400/60 mb-3">
-                    Job Requires
-                  </p>
-                  <div
-                    className="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center"
-                    style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.2)" }}
-                  >
-                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.25)" }}
+                    >
+                      <svg className="w-3 h-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-blue-400/60">Job Requires</p>
                   </div>
-                  <p className="text-sm font-bold text-white mb-1">
+                  <p className="text-sm font-bold text-white mb-0.5">
                     {domainLabels[apiData.jdDomain] ?? apiData.jdDomain}
                   </p>
-                  <p className="text-2xl font-bold text-white mb-4">{apiData.resumeScore}%</p>
+                  <p className="text-xs text-white/30 mb-3">
+                    Prepare for <span className="text-blue-300/70 font-semibold">this role</span>
+                  </p>
                   <button
                     onClick={() =>
-                      navigate("/quiz", { state: { domain: apiData.jdDomain, questions: apiData.jdQuestions } })
+                      navigate("/quiz", {
+                        state: {
+                          domain: apiData.jdDomain,
+                          questions: apiData.jdQuestions,
+                          score: apiData.resumeScore,
+                          matchedSkills: apiData.matchedSkills,
+                          missingSkills: apiData.missingSkills,
+                        },
+                      })
                     }
                     className="w-full py-2 rounded-lg text-xs font-semibold text-white transition-all duration-200"
                     style={{
-                      background: "linear-gradient(135deg, #ef4444, #dc2626)",
-                      boxShadow: "0 2px 12px rgba(239,68,68,0.25)",
+                      background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                      boxShadow: "0 2px 12px rgba(59,130,246,0.25)",
                     }}
                   >
-                    Take Quiz →
+                    Quiz for This Job →
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Cancel */}
-            <div className="px-6 pb-6">
+            {/* Footer actions */}
+            <div className="px-5 pb-5 space-y-2">
+              <button
+                onClick={() => {
+                  handleCancel();
+                  navigate("/resume-analysis", { state: apiData });
+                }}
+                className="w-full py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-white/60 hover:text-white/85"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                View Full Resume Analysis
+              </button>
               <button
                 onClick={handleCancel}
-                className="w-full py-2.5 rounded-xl text-sm text-white/40 transition-all duration-200"
-                style={{ border: "1px solid rgba(255,255,255,0.06)" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                  (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.4)";
-                }}
+                className="w-full py-2 text-xs text-white/25 hover:text-white/45 transition-colors"
               >
                 Maybe Later
               </button>
             </div>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
     </main>
   );
 }
