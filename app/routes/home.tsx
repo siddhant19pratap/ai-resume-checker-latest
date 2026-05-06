@@ -24,125 +24,101 @@ export default function Home() {
   }, [auth.isAuthenticated, navigate]);
 
   return (
-    <main className="min-h-screen bg-[#030712] text-white relative overflow-hidden">
-
-      {/* 🌌 Background */}
-      <div className="absolute inset-0 z-0">
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-900/30 via-black to-cyan-900/20" />
-
-        {/* Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px]" />
-      </div>
-
-      {/* 🔝 Navbar */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+    <main className="min-h-screen bg-zinc-950 text-white">
+      {/* Navbar */}
+      <div className="sticky top-0 z-50 backdrop-blur-md bg-black/60 border-b border-zinc-800">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <Navbar />
         </div>
       </div>
 
-      {/* 🚀 Hero */}
-      <section className="relative z-10 text-center py-20">
-        <div className="max-w-4xl mx-auto px-4">
-
-          {/* Badge */}
-          <div className="inline-block mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300">
-            ✨ AI-powered feedback to land jobs faster
+      {/* Hero */}
+      <section className="py-20 text-center">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-medium mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
+            AI-powered resume analysis
           </div>
 
-          {/* Heading */}
-          <h1 className="text-5xl md:text-6xl text-white! font-bold leading-tight mb-6">
-            Parse your Resume using{" "}
-            <span className="bg-linear-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              AI
-            </span>
+          <h1 className="text-4xl md:text-5xl font-semibold text-white leading-tight mb-4">
+            Analyze your Resume with AI
           </h1>
 
-          {/* Subtext */}
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Use AI-powered feedback to land jobs faster. Get instant, actionable insights to improve your resume.
+          <p className="text-zinc-400 text-base max-w-xl mx-auto">
+            Get instant, actionable insights to improve your resume and land jobs faster.
           </p>
         </div>
       </section>
 
-      {/* 📄 Resume Section */}
+      {/* Resume Section */}
       {resumes.length > 0 ? (
-        <section className="relative z-10 pt-10 pb-20">
-          <div className="container mx-auto px-4 max-w-7xl">
-
-            {/* Heading */}
-            <div className="mb-12">
-              <h2 className="text-3xl font-semibold mb-2">
-                Your Resumes
-              </h2>
-              <p className="text-gray-400">
-                {resumes.length} {resumes.length === 1 ? "resume" : "resumes"} analyzed
-              </p>
+        <section className="pb-24">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Your Resumes</h2>
+                <p className="text-sm text-zinc-500 mt-1">
+                  {resumes.length} {resumes.length === 1 ? "resume" : "resumes"} analyzed
+                </p>
+              </div>
+              <a
+                href="/upload"
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-all duration-200"
+              >
+                + Upload New
+              </a>
             </div>
 
-            {/* Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {resumes.map((resume: Resume, index) => (
                 <ResumeCard key={resume.id ?? index} resume={resume} />
               ))}
             </div>
 
-            {/* Bottom Cards */}
-            <div className="grid md:grid-cols-2 gap-6 mt-12">
-
-              <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex justify-between items-center hover:border-cyan-500/30 transition">
+            <div className="grid md:grid-cols-2 gap-5 mt-8">
+              <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-5 flex justify-between items-center hover:border-zinc-700 transition-all duration-200">
                 <div>
-                  <h3 className="font-semibold">DATA ENGINEERING Quiz</h3>
-                  <p className="text-gray-400 text-sm">Continue skills validation</p>
+                  <h3 className="text-sm font-semibold text-white">Data Engineering Quiz</h3>
+                  <p className="text-xs text-zinc-500 mt-0.5">Continue skills validation</p>
                 </div>
-                <button className="text-cyan-400 hover:underline">
-                  Open quiz →
+                <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200">
+                  Open →
                 </button>
               </div>
 
-              <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex justify-between items-center hover:border-cyan-500/30 transition">
+              <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-5 flex justify-between items-center hover:border-zinc-700 transition-all duration-200">
                 <div>
-                  <h3 className="font-semibold">Your Performance Dashboard</h3>
-                  <p className="text-gray-400 text-sm">Review resume and quiz signals</p>
+                  <h3 className="text-sm font-semibold text-white">Performance Dashboard</h3>
+                  <p className="text-xs text-zinc-500 mt-0.5">Review resume and quiz signals</p>
                 </div>
-                <button className="text-cyan-400 hover:underline">
-                  View result →
+                <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200">
+                  View →
                 </button>
               </div>
-
             </div>
-
           </div>
         </section>
       ) : (
-        <section className="relative z-10 pt-20 pb-20">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="max-w-md mx-auto text-center">
-
-              <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-12">
-
-                <div className="w-20 h-20 mx-auto mb-6 bg-linear-to-br from-cyan-500/20 to-blue-500/20 rounded-full flex items-center justify-center">
-                  📄
+        <section className="pb-24">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="max-w-sm mx-auto text-center">
+              <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-10">
+                <div className="w-12 h-12 mx-auto mb-5 rounded-xl bg-zinc-800 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
                 </div>
-
-                <h3 className="text-2xl font-semibold mb-3">
-                  No Resumes Yet
-                </h3>
-
-                <p className="text-gray-400 mb-6">
-                  Upload your first resume to get AI-powered feedback and improve your chances.
+                <h3 className="text-base font-semibold text-white mb-2">No resumes yet</h3>
+                <p className="text-sm text-zinc-500 mb-6">
+                  Upload your first resume to get AI-powered feedback.
                 </p>
-
                 <a
                   href="/upload"
-                  className="px-6 py-3 rounded-lg bg-linear-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20"
+                  className="inline-block px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-all duration-200"
                 >
                   Upload Resume
                 </a>
-
               </div>
-
             </div>
           </div>
         </section>

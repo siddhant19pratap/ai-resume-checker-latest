@@ -10,7 +10,7 @@ const ResumeCard = ({
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-400";
-    if (score >= 60) return "text-yellow-400";
+    if (score >= 60) return "text-amber-400";
     return "text-red-400";
   };
 
@@ -20,89 +20,76 @@ const ResumeCard = ({
     return "Needs Improvement";
   };
 
+  const getScoreBadge = (score: number) => {
+    if (score >= 80) return "bg-green-500/10 border-green-500/20 text-green-400";
+    if (score >= 60) return "bg-amber-500/10 border-amber-500/20 text-amber-400";
+    return "bg-red-500/10 border-red-500/20 text-red-400";
+  };
+
   return (
     <Link
       to={`/resume/${id}`}
-      className="group relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10"
+      className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/70 p-5 flex flex-col gap-4 hover:border-zinc-700 hover:shadow-xl transition-all duration-200"
     >
-      {/* 🔹 Header */}
-      <div className="flex justify-between items-start gap-4 mb-6">
-        <div className="flex flex-col gap-1 min-w-0">
+      {/* Header */}
+      <div className="flex justify-between items-start gap-3">
+        <div className="min-w-0 flex-1">
           {companyName || jobTitle ? (
             <>
               {companyName && (
-                <h2 className="text-lg font-semibold text-white truncate group-hover:text-cyan-400 transition">
+                <h2 className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition-colors duration-200">
                   {companyName}
                 </h2>
               )}
               {jobTitle && (
-                <p className="text-sm text-gray-400 truncate">
-                  {jobTitle}
-                </p>
+                <p className="text-xs text-zinc-500 truncate mt-0.5">{jobTitle}</p>
               )}
             </>
           ) : (
-            <h2 className="text-lg font-semibold text-white">Resume</h2>
+            <h2 className="text-sm font-semibold text-white">Resume</h2>
           )}
-
-          {/* Status */}
-          <span
-            className={`text-xs font-medium mt-2 ${getScoreColor(score)}`}
-          >
+          <span className={`inline-block text-xs font-medium mt-2 px-2.5 py-1 rounded-full border ${getScoreBadge(score)}`}>
             {getScoreLabel(score)}
           </span>
         </div>
 
-        {/* 🔵 Score */}
         <div className="shrink-0">
           <ScoreCircle score={score} />
         </div>
       </div>
 
-      {/* 🧾 Preview Section */}
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 mb-6 overflow-hidden">
+      {/* Preview */}
+      <div className="rounded-xl border border-zinc-800 bg-zinc-800/30 overflow-hidden">
         {imagePath ? (
           <img
             src={imagePath}
             alt="Resume Preview"
-            className="w-full h-[330px] object-cover rounded-lg opacity-90 group-hover:opacity-100 group-hover:scale-[1.02] transition duration-300"
+            className="w-full h-[220px] object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300"
             loading="lazy"
           />
         ) : (
-          <div className="space-y-2">
-            <div className="h-3 bg-white/10 rounded w-3/4" />
-            <div className="h-3 bg-white/10 rounded w-1/2" />
-            <div className="h-3 bg-white/10 rounded w-2/3" />
-
+          <div className="p-4 space-y-2">
+            <div className="h-2.5 bg-zinc-700 rounded w-3/4" />
+            <div className="h-2.5 bg-zinc-700 rounded w-1/2" />
+            <div className="h-2.5 bg-zinc-700 rounded w-2/3" />
             <div className="flex gap-2 mt-3">
-              <div className="h-6 w-10 bg-white/10 rounded" />
-              <div className="h-6 w-10 bg-white/10 rounded" />
-              <div className="h-6 w-10 bg-white/10 rounded" />
+              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
+              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
+              <div className="h-5 w-12 bg-zinc-700 rounded-full" />
             </div>
           </div>
         )}
       </div>
 
-      {/* 🔻 Footer */}
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2 text-gray-400">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+      {/* Footer */}
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 text-zinc-500">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Analyzed
         </div>
-
-        <span className="text-gray-500 group-hover:text-cyan-400 transition">
+        <span className="text-zinc-600 group-hover:text-blue-400 transition-colors duration-200">
           View Details →
         </span>
       </div>

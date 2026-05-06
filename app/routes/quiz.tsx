@@ -3,16 +3,13 @@ import { useState } from "react";
 import { message } from "antd";
 import Navbar from "~/components/Navbar";
 
-// ✅ Added: random question selector
 function getRandomQuestions(allQuestions: any[], count = 5) {
   if (allQuestions.length <= count) return allQuestions;
-
   const shuffled = [...allQuestions];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
-
   return shuffled.slice(0, count);
 }
 
@@ -22,11 +19,7 @@ export default function Quiz() {
 
   const { questions = [], domain } = state || {};
 
-  // ✅ Added: select only 5 random questions (runs once)
-  const [selectedQuestions] = useState(() =>
-    getRandomQuestions(questions, 5)
-  );
-
+  const [selectedQuestions] = useState(() => getRandomQuestions(questions, 5));
   const [answers, setAnswers] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +30,6 @@ export default function Quiz() {
   };
 
   const handleSubmit = async () => {
-    // ✅ Updated: use selectedQuestions
     if (answers.length !== selectedQuestions.length) {
       message.error("Please answer all questions");
       return;
@@ -46,10 +38,10 @@ export default function Quiz() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/submit-answers", {
+      const res = await fetch("http://localhost:3001/api/submit-answers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({domain,answers,questions: selectedQuestions}),
+        body: JSON.stringify({ domain, answers, questions: selectedQuestions }),
       });
 
       const data = await res.json();
@@ -57,14 +49,9 @@ export default function Quiz() {
       navigate("/result", {
         state: {
           resumeScore: state.score,
-
           quizScore: data.score,
-          // ✅ Updated
-          percentage: Math.round(
-            (data.score / selectedQuestions.length) * 100
-          ),
+          percentage: Math.round((data.score / selectedQuestions.length) * 100),
           total: selectedQuestions.length,
-
           matchedSkills: state.matchedSkills,
           missingSkills: state.missingSkills,
         },
@@ -77,98 +64,82 @@ export default function Quiz() {
     }
   };
 
-  // ✅ Updated
-  const progress = Math.round(
-    (answers.filter(Boolean).length / selectedQuestions.length) * 100
-  );
+  const answeredCount = answers.filter(Boolean).length;
+  const progress = Math.round((answeredCount / selectedQuestions.length) * 100);
 
   return (
-    <main className="min-h-screen bg-[#030712] text-white relative overflow-hidden">
-
-      {/* 🌌 Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-900/30 via-black to-cyan-900/20" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px]" />
-      </div>
-
-      {/* 🔝 Navbar */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+    <main className="min-h-screen bg-zinc-950 text-white">
+      {/* Navbar */}
+      <div className="sticky top-0 z-50 backdrop-blur-md bg-black/60 border-b border-zinc-800">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <Navbar />
         </div>
       </div>
 
-      {/* 🚀 Header */}
-            <section className="relative z-10 text-center py-16">
-              <h1 className="text-5xl md:text-6xl text-white font-bold mb-6">
-                {domain?.toUpperCase()} Quiz
-              </h1>
-
-
-
-        {/* Progress */}
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-2 bg-linear-to-r from-indigo-500 via-blue-500 to-cyan-500 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
+      {/* Header */}
+      <section className="py-12">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="mb-6">
+            <p className="text-xs font-medium text-blue-400 uppercase tracking-widest mb-2">Skills Quiz</p>
+            <h1 className="text-3xl font-semibold text-white capitalize">
+              {domain} Quiz
+            </h1>
           </div>
-          <p className="text-sm text-gray-400 mt-2 text-right">
-            {progress}% completed
-          </p>
+
+          {/* Progress */}
+          <div>
+            <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+              <span>{answeredCount} of {selectedQuestions.length} answered</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+              <div
+                className="h-1.5 bg-blue-500 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 📄 Questions */}
-      <section className="relative z-10 pb-20">
-        <div className="max-w-4xl mx-auto px-4 space-y-6">
+      {/* Questions */}
+      <section className="pb-24">
+        <div className="max-w-3xl mx-auto px-6 space-y-4">
 
-          {/* ✅ Updated */}
           {selectedQuestions.map((q: any, index: number) => (
             <div
               key={index}
-              className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6"
+              className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-6 shadow-lg"
             >
-
-              {/* Question */}
-              <h2 className="text-lg font-semibold mb-4">
-                {index + 1}. {q.question}
+              <h2 className="text-sm font-semibold text-white mb-4 leading-relaxed">
+                <span className="text-zinc-500 mr-2">{index + 1}.</span>
+                {q.question}
               </h2>
 
-              {/* Options */}
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {q.options.map((opt: string, i: number) => {
                   const isSelected = answers[index] === opt;
-
                   return (
-                    <div
+                    <button
                       key={i}
                       onClick={() => handleSelect(index, opt)}
-                      className={`cursor-pointer rounded-xl border px-4 py-3 transition-all duration-200 flex justify-between items-center
-                        ${
-                          isSelected
-                            ? "border-cyan-500 bg-cyan-500/10"
-                            : "border-white/10 hover:border-cyan-400/40 hover:bg-white/5"
-                        }
-                      `}
+                      className={`w-full text-left rounded-xl border px-4 py-3 text-sm transition-all duration-200 flex items-center justify-between gap-3 ${
+                        isSelected
+                          ? "border-blue-500 bg-blue-600/10 text-white"
+                          : "border-zinc-700 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200 hover:bg-zinc-800/60"
+                      }`}
                     >
-                      <span className="text-sm text-gray-200">{opt}</span>
-
+                      <span>{opt}</span>
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                          ${
-                            isSelected
-                              ? "border-cyan-400"
-                              : "border-gray-500"
-                          }
-                        `}
+                        className={`shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                          isSelected ? "border-blue-500" : "border-zinc-600"
+                        }`}
                       >
                         {isSelected && (
-                          <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
+                          <div className="w-2 h-2 bg-blue-500 rounded-full" />
                         )}
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -176,13 +147,21 @@ export default function Quiz() {
           ))}
 
           {/* Submit */}
-          <div className="pt-6">
+          <div className="pt-4">
             <button
               onClick={handleSubmit}
-              disabled={loading}
-              className="w-full py-3 cursor-pointer transition-all duration-200 active:scale-95 rounded-full bg-linear-to-r from-indigo-500 via-blue-500 to-cyan-500 hover:opacity-90 shadow-lg shadow-cyan-500/20 font-medium disabled:opacity-60"
+              disabled={loading || answeredCount < selectedQuestions.length}
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed text-sm font-medium transition-all duration-200"
             >
-              {loading ? "Submitting..." : "Submit Answers"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  Submitting...
+                </span>
+              ) : "Submit Answers"}
             </button>
           </div>
 

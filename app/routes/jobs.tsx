@@ -7,7 +7,7 @@ export default function Jobs() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/jobs/list")
+    fetch("http://localhost:3001/api/jobs/list")
       .then((res) => res.json())
       .then((data) => setJobs(data))
       .catch((err) => console.error("Failed to load jobs", err));
@@ -24,130 +24,87 @@ export default function Jobs() {
   };
 
   return (
-    <main className="min-h-screen bg-[#030712] text-white relative overflow-hidden">
-
-      {/* 🌌 Background */}
-      <div className="absolute inset-0 z-0">
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-900/30 via-black to-cyan-900/20" />
-
-        {/* Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px]" />
-      </div>
-
-      {/* 🔝 Navbar */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+    <main className="min-h-screen bg-zinc-950 text-white">
+      {/* Navbar */}
+      <div className="sticky top-0 z-50 backdrop-blur-md bg-black/60 border-b border-zinc-800">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <Navbar />
         </div>
       </div>
 
-      {/* 🚀 Hero */}
-      <section className="relative z-10 text-center py-24">
-
-        {/* JOB BOARD */}
-        <p className="
-          text-lg md:text-xl 
-          tracking-[0.4em] 
-          text-cyan-400 
-          mb-6 
-          uppercase 
-          font-bold
-        ">
-          JOB BOARD
-        </p>
-
-        <h1 className="
-          text-5xl md:text-7xl font-bold
-          bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500
-          bg-clip-text text-transparent
-          drop-shadow-[0_0_20px_rgba(59,130,246,0.35)]
-          inline-block
-        ">
-          Available Jobs
-        </h1>
-
+      {/* Header */}
+      <section className="py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-xs font-medium text-blue-400 uppercase tracking-widest mb-2">Job Board</p>
+              <h1 className="text-3xl font-semibold text-white">Available Jobs</h1>
+            </div>
+            <button
+              onClick={() => navigate("/post-job")}
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-all duration-200"
+            >
+              + Post Job
+            </button>
+          </div>
+        </div>
       </section>
 
-      {/* 📄 Content */}
-      <section className="relative z-10 pb-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+      {/* Content */}
+      <section className="pb-24">
+        <div className="max-w-6xl mx-auto px-6">
 
-          {/* ❌ Empty State */}
           {jobs.length === 0 ? (
-            <div className="max-w-2xl mx-auto text-center">
-
-              <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-12">
-
-                {/* Icon */}
-                <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-cyan-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeWidth={1.5}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M20 13V6a2 2 0 00-2-2h-3.586a1 1 0 01-.707-.293l-1.414-1.414A1 1 0 0012.586 2H6a2 2 0 00-2 2v9m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4"
-                    />
+            <div className="max-w-sm mx-auto text-center py-10">
+              <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-10">
+                <div className="w-12 h-12 mx-auto mb-5 rounded-xl bg-zinc-800 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2h-3.586a1 1 0 01-.707-.293l-1.414-1.414A1 1 0 0012.586 2H6a2 2 0 00-2 2v9m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4" />
                   </svg>
                 </div>
-
-                {/* Text */}
-                <h3 className="text-xl font-semibold mb-2">
-                  No jobs posted yet
-                </h3>
-
-                <p className="text-gray-400 mb-6">
-                  Check back later or post your own job
-                </p>
-
-                {/* Button */}
+                <h3 className="text-base font-semibold text-white mb-2">No jobs posted yet</h3>
+                <p className="text-sm text-zinc-500 mb-6">Be the first to post a job listing.</p>
                 <button
                   onClick={() => navigate("/post-job")}
-                  className="px-6 py-3 rounded-full bg-linear-to-r cursor-pointer transition-all duration-200 active:scale-95 from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20 hover:opacity-90 "
+                  className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-all duration-200"
                 >
-                  + Post Job
+                  Post a Job
                 </button>
-
               </div>
-
             </div>
           ) : (
-            /* ✅ Jobs Grid */
-            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10 flex flex-col justify-between"
+                  className="group bg-zinc-900/70 border border-zinc-800 rounded-2xl p-6 flex flex-col justify-between hover:border-zinc-700 hover:shadow-xl transition-all duration-200"
                 >
                   <div>
-                    <h2 className="text-lg font-semibold text-white mb-1 group-hover:text-cyan-400 transition">
-                      {job.title}
-                    </h2>
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div>
+                        <h2 className="text-base font-semibold text-white group-hover:text-blue-400 transition-colors duration-200">
+                          {job.title}
+                        </h2>
+                        <p className="text-sm text-zinc-500 mt-0.5">{job.company}</p>
+                      </div>
+                      <span className="shrink-0 px-2.5 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+                        Open
+                      </span>
+                    </div>
 
-                    <p className="text-cyan-400 text-sm mb-4">
-                      {job.company}
-                    </p>
-
-                    <p className="text-sm text-gray-400 line-clamp-4 mb-6">
+                    <p className="text-sm text-zinc-400 line-clamp-4 leading-relaxed">
                       {job.description}
                     </p>
                   </div>
 
                   <button
                     onClick={() => checkMatch(job)}
-                    className="mt-auto w-full py-2.5 cursor-pointer transition-all duration-200 active:scale-95 rounded-xl bg-linear-to-r from-cyan-500 to-blue-500 hover:opacity-90  shadow-md shadow-cyan-500/20 text-sm font-medium"
+                    className="mt-5 w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-sm font-medium transition-all duration-200"
                   >
                     Check Resume Match
                   </button>
                 </div>
               ))}
-
             </div>
           )}
 
