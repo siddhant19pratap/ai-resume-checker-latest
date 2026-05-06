@@ -9,6 +9,8 @@ export default [
   route("/quiz", "routes/quiz.tsx"),
   route("/post-job", "routes/post-job.tsx"),
 
-  // ✅ ADD THIS
   route("/resume-analysis", "routes/resume-analysis.tsx"),
+  route("/ai-interview", "routes/ai-interview.tsx"),
+  route("/practice", "routes/practice.tsx"),
+  route("/cover-letter", "routes/cover-letter.tsx"),
 ] satisfies RouteConfig;

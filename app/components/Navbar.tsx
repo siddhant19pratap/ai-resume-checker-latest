@@ -23,7 +23,8 @@ const Navbar = () => {
       <div className="hidden sm:flex items-center gap-0.5">
         {[
           { to: "/jobs", label: "Browse Jobs" },
-          { to: "/post-job", label: "Post Job" },
+          { to: "/cover-letter", label: "Cover Letter" },
+          { to: "/practice", label: "Practice" },
         ].map(({ to, label }) => (
           <Link
             key={to}
@@ -37,6 +38,20 @@ const Navbar = () => {
             {label}
           </Link>
         ))}
+        <Link
+          to="/ai-interview"
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+            isActive("/ai-interview")
+              ? "text-white bg-white/8"
+              : "text-white/45 hover:text-white/90 hover:bg-white/5"
+          }`}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: isActive("/ai-interview") ? "#60a5fa" : "rgba(96,165,250,0.5)" }}
+          />
+          AI Interview
+        </Link>
       </div>
 
       {/* CTA */}

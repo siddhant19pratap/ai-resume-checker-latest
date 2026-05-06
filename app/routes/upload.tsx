@@ -43,6 +43,12 @@ export default function Upload() {
       if (!res.ok) throw new Error();
       const data = await res.json();
       setApiData(data);
+      if (data.resumeSkills?.length) {
+        localStorage.setItem(
+          "ambix_resume_cache",
+          JSON.stringify({ skills: data.resumeSkills, domain: data.resumeDomain, uploadedAt: Date.now() })
+        );
+      }
       return data;
     } catch (err) {
       console.error(err);
